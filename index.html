@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>飞机射击游戏</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -101,6 +101,35 @@
         <button id="pauseButton" class="absolute top-4 right-4 z-10 bg-gray-900/80 hover:bg-gray-800 text-white p-2 rounded pixel-borders transition-colors">
             <i class="fa fa-pause"></i>
         </button>
+        
+        <!-- 移动端控制界面 -->
+        <div id="mobileControls" class="absolute bottom-6 left-0 right-0 flex justify-between px-6 z-20 md:hidden">
+            <!-- 方向控制 -->
+            <div id="directionPad" class="grid grid-cols-3 grid-rows-3 gap-2 w-32 h-32">
+                <div></div>
+                <button id="btnUp" class="bg-gray-800/60 hover:bg-gray-700/80 text-white rounded-full flex items-center justify-center opacity-70">
+                    <i class="fa fa-chevron-up"></i>
+                </button>
+                <div></div>
+                <button id="btnLeft" class="bg-gray-800/60 hover:bg-gray-700/80 text-white rounded-full flex items-center justify-center opacity-70">
+                    <i class="fa fa-chevron-left"></i>
+                </button>
+                <div></div>
+                <button id="btnRight" class="bg-gray-800/60 hover:bg-gray-700/80 text-white rounded-full flex items-center justify-center opacity-70">
+                    <i class="fa fa-chevron-right"></i>
+                </button>
+                <div></div>
+                <button id="btnDown" class="bg-gray-800/60 hover:bg-gray-700/80 text-white rounded-full flex items-center justify-center opacity-70">
+                    <i class="fa fa-chevron-down"></i>
+                </button>
+                <div></div>
+            </div>
+            
+            <!-- 射击按钮 -->
+            <button id="btnShoot" class="bg-secondary hover:bg-secondary/80 text-white w-20 h-20 rounded-full flex items-center justify-center opacity-70">
+                <i class="fa fa-crosshairs text-2xl"></i>
+            </button>
+        </div>
     </div>
 
     <script>
@@ -726,6 +755,40 @@
             if (e.key === ' ') keys.space = false;
         });
         
+        // 移动端触控控制
+        document.getElementById('btnUp').addEventListener('touchstart', () => { keys.up = true; });
+        document.getElementById('btnUp').addEventListener('touchend', () => { keys.up = false; });
+        document.getElementById('btnDown').addEventListener('touchstart', () => { keys.down = true; });
+        document.getElementById('btnDown').addEventListener('touchend', () => { keys.down = false; });
+        document.getElementById('btnLeft').addEventListener('touchstart', () => { keys.left = true; });
+        document.getElementById('btnLeft').addEventListener('touchend', () => { keys.left = false; });
+        document.getElementById('btnRight').addEventListener('touchstart', () => { keys.right = true; });
+        document.getElementById('btnRight').addEventListener('touchend', () => { keys.right = false; });
+        document.getElementById('btnShoot').addEventListener('touchstart', () => {
+            if (gameRunning && !gamePaused) {
+                player.shoot();
+            }
+        });
+        
+        // 鼠标点击控制（适用于触摸屏和桌面设备）
+        document.getElementById('btnUp').addEventListener('mousedown', () => { keys.up = true; });
+        document.getElementById('btnUp').addEventListener('mouseup', () => { keys.up = false; });
+        document.getElementById('btnUp').addEventListener('mouseleave', () => { keys.up = false; });
+        document.getElementById('btnDown').addEventListener('mousedown', () => { keys.down = true; });
+        document.getElementById('btnDown').addEventListener('mouseup', () => { keys.down = false; });
+        document.getElementById('btnDown').addEventListener('mouseleave', () => { keys.down = false; });
+        document.getElementById('btnLeft').addEventListener('mousedown', () => { keys.left = true; });
+        document.getElementById('btnLeft').addEventListener('mouseup', () => { keys.left = false; });
+        document.getElementById('btnLeft').addEventListener('mouseleave', () => { keys.left = false; });
+        document.getElementById('btnRight').addEventListener('mousedown', () => { keys.right = true; });
+        document.getElementById('btnRight').addEventListener('mouseup', () => { keys.right = false; });
+        document.getElementById('btnRight').addEventListener('mouseleave', () => { keys.right = false; });
+        document.getElementById('btnShoot').addEventListener('mousedown', () => {
+            if (gameRunning && !gamePaused) {
+                player.shoot();
+            }
+        });
+        
         // 窗口大小调整时保持Canvas居中
         window.addEventListener('resize', () => {
             const container = canvas.parentElement;
@@ -736,9 +799,17 @@
             container.style.justifyContent = 'center';
         });
         
+        // 防止移动端触摸事件默认行为
+        document.getElementById('mobileControls').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+        
+        document.getElementById('mobileControls').addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+        
         // 初始化Canvas位置
         window.dispatchEvent(new Event('resize'));
     </script>
 </body>
 </html>
-    
